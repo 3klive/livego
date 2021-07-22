@@ -267,7 +267,7 @@ func (s *Server) handlePull(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-//http://127.0.0.1:8090/control/push?&oper=start&app=live&name=123456&url=rtmp://192.168.16.136/live/123456
+//http://127.0.0.1:8090/control/push?&oper=start&channel_id=0&app=live&name=123456&url=rtmp://192.168.16.136/live/123456
 func (s *Server) handlePush(w http.ResponseWriter, req *http.Request) {
 	var retString string
 	var err error
@@ -289,6 +289,7 @@ func (s *Server) handlePush(w http.ResponseWriter, req *http.Request) {
 	app := req.Form.Get("app")
 	name := req.Form.Get("name")
 	url := req.Form.Get("url")
+	channelId := req.Form.Get("channel_id")
 
 	log.Debugf("control push: oper=%v, app=%v, name=%v, url=%v", oper, app, name, url)
 	if (len(app) <= 0) || (len(name) <= 0) || (len(url) <= 0) {
@@ -299,7 +300,7 @@ func (s *Server) handlePush(w http.ResponseWriter, req *http.Request) {
 	localurl := "rtmp://127.0.0.1" + s.rtmpAddr + "/" + app + "/" + name
 	remoteurl := url
 
-	keyString := "push:" + app + "/" + name
+	keyString := "push:" + app + "/" + name + "/" + channelId
 	if oper == "stop" {
 		pushRtmprelay, found := s.session[keyString]
 		if !found {
