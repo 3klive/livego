@@ -130,7 +130,7 @@ func (s *Server) Serve(l net.Listener) error {
 type stream struct {
 	Key             string `json:"key"`
 	Url             string `json:"url"`
-	StreamId        uint32 `json:"stream_id"`
+	StreamId        string `json:"stream_id"`
 	VideoTotalBytes uint64 `json:"video_total_bytes"`
 	VideoSpeed      uint64 `json:"video_speed"`
 	AudioTotalBytes uint64 `json:"audio_total_bytes"`
@@ -167,7 +167,7 @@ func (server *Server) GetLiveStatics(w http.ResponseWriter, req *http.Request) {
 				switch s.GetReader().(type) {
 				case *rtmp.VirReader:
 					v := s.GetReader().(*rtmp.VirReader)
-					msg := stream{key.(string), v.Info().URL, v.ReadBWInfo.StreamId, v.ReadBWInfo.VideoDatainBytes, v.ReadBWInfo.VideoSpeedInBytesperMS,
+					msg := stream{key.(string), v.Info().URL, v.Info().UID, v.ReadBWInfo.VideoDatainBytes, v.ReadBWInfo.VideoSpeedInBytesperMS,
 						v.ReadBWInfo.AudioDatainBytes, v.ReadBWInfo.AudioSpeedInBytesperMS}
 					msgs.Publishers = append(msgs.Publishers, msg)
 				}
@@ -176,6 +176,7 @@ func (server *Server) GetLiveStatics(w http.ResponseWriter, req *http.Request) {
 		return true
 	})
 
+	// This is it.
 	rtmpStream.GetStreams().Range(func(key, val interface{}) bool {
 		ws := val.(*rtmp.Stream).GetWs()
 		ws.Range(func(k, v interface{}) bool {
@@ -184,7 +185,7 @@ func (server *Server) GetLiveStatics(w http.ResponseWriter, req *http.Request) {
 					switch pw.GetWriter().(type) {
 					case *rtmp.VirWriter:
 						v := pw.GetWriter().(*rtmp.VirWriter)
-						msg := stream{key.(string), v.Info().URL, v.WriteBWInfo.StreamId, v.WriteBWInfo.VideoDatainBytes, v.WriteBWInfo.VideoSpeedInBytesperMS,
+						msg := stream{key.(string), v.Info().URL, v.Info().UID, v.WriteBWInfo.VideoDatainBytes, v.WriteBWInfo.VideoSpeedInBytesperMS,
 							v.WriteBWInfo.AudioDatainBytes, v.WriteBWInfo.AudioSpeedInBytesperMS}
 						msgs.Players = append(msgs.Players, msg)
 					}
