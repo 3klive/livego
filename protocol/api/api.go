@@ -322,6 +322,7 @@ func (s *Server) handlePush(w http.ResponseWriter, req *http.Request) {
 		err = pushRtmprelay.Start()
 		if err != nil {
 			retString = fmt.Sprintf("push error=%v", err)
+			res.Status = 503
 		} else {
 			retString = fmt.Sprintf("<h1>push url start %s ok</h1></br>", url)
 			s.session[keyString] = pushRtmprelay
