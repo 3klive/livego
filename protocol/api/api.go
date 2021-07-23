@@ -306,6 +306,7 @@ func (s *Server) handlePush(w http.ResponseWriter, req *http.Request) {
 		pushRtmprelay, found := s.session[keyString]
 		if !found {
 			retString = fmt.Sprintf("<h1>session key[%s] not exist, please check it again.</h1>", keyString)
+			res.Status = 503
 			res.Data = retString
 			return
 		}
