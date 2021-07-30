@@ -28,9 +28,11 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
 
-      - name: Clone repository
-        run: |
-          git clone https://${{ secrets.GIT_ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY $GITHUB_WORKSPACE
+      - uses: actions/checkout@master
+                
+#      - name: Clone repository
+#        run: |
+#          git clone https://${{ secrets.GIT_ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY $GITHUB_WORKSPACE
 
       - name: Create container
         run: |
